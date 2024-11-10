@@ -1,7 +1,5 @@
 function PlayerJoiningTest()
     local licenseId = "3e42rotylj34ojyio6jhjyi89"
-    local playerService = PlayerService:new()
-    local player = Player:new(9, licenseId, 0, 0, 0, 12, 1, false)
 
     playerService:existByLicense(licenseId, function(playerExist)
         if not playerExist then
@@ -18,9 +16,11 @@ function PlayerJoiningTest()
     end)
 end
 
-print("============================")
+AddEventHandler('onResourceStart', function(name, setKickReason, deferrals)
+    print("============================")
 print("-----------TESTS------------")
-print("============================")
-print('')
-print("PlayerJoiningTest()")
-PlayerJoiningTest()
+    print("============================")
+    print('')
+    print("PlayerJoiningTest()")
+    PlayerJoiningTest()
+end)

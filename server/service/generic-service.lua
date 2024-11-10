@@ -1,11 +1,18 @@
 -- Define the GenericService class
-GenericService = {
-    list = {}
-}
+GenericService = {}
+GenericService.__index = GenericService
 
-function GenericService.get(index)
+function GenericService:new(Type, indexKey)
+    local genericService = setmetatable({}, self)
+    genericService.list = {}
+    genericService.entityType = Type
+    genericService.indexKey = indexKey
+    return genericService
+end
+
+function GenericService:get(index)
     local genericEntity = self.list[index]
-    print(GenericService.getEntityType().getTypeName() .. ' ID ' .. genericEntity.id .. ' has been retreived from ' .. GenericService.getIndexKey() .. ' ' .. index .. '.')
+    print(self.entityType.getTypeName() .. ' ID ' .. genericEntity.id .. ' has been retreived from ' .. self.indexKey .. ' ' .. index .. '.')
     return genericEntity
 end
 

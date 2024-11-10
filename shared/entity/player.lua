@@ -3,7 +3,7 @@ Player = setmetatable({}, GenericEntity)
 Player.__index = Player
 
 function Player:new(id, licenseId, groupId, xp, citizenLevel, currentPersonageId, maxPersonage, banned)
-    local player = GenericEntity.new(self, id, nil, nil)
+    local player = GenericEntity.new(self, id)
 
     -- Set player fields
     player.licenseId = licenseId

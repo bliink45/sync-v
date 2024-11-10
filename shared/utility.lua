@@ -1,8 +1,4 @@
-json = require("json")
-
-Utility = {
-    JSON = json
-}
+Utility = {}
 
 -- Function to display table values
 function Utility.printTable(tbl)

@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS modular_server.personage (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   player_id bigint NOT NULL,
   information longtext NOT NULL,
-  body longtext NOT NULL,
-  clothes longtext DEFAULT NULL,
+  model longtext NOT NULL,
+  current_outfit longtext DEFAULT NULL,
   max_outfit bigint NOT NULL,
   created_at date DEFAULT NULL,
   updated_at date DEFAULT NULL

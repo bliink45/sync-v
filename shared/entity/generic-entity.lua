@@ -2,14 +2,14 @@
 GenericEntity = {}
 GenericEntity.__index = GenericEntity
 
-function GenericEntity:new(id, createdAt, updatedAt)
+function GenericEntity:new(id)
     -- Create a new object (table) and set its metatable to Player
     local genericEntity = setmetatable({}, self)
 
     -- Set player fields
     genericEntity.id = id
-    genericEntity.createdAt = createdAt
-    genericEntity.updatedAt = updatedAt
+    genericEntity.createdAt = nil
+    genericEntity.updatedAt = nil
 
     return genericEntity
 end
