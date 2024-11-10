@@ -2,7 +2,7 @@
 Personage = setmetatable({}, GenericEntity)
 Personage.__index = Personage
 
-function Personage:new(id, playerId, information, model, currentOutfit, maxOutfit, )
+function Personage:new(id, playerId, information, model, currentOutfit, maxOutfit)
     local personage = GenericEntity.new(self, id)
 
     -- Set personage fields
