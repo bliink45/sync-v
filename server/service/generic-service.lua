@@ -12,26 +12,8 @@ function GenericService:new(Type, indexKey, cached)
 end
 
 function GenericService:get(index)
-    local genericEntity = nil
-
-    if self.cached then
-        genericEntity = self.list[index]
-        print(self.entityType.getTypeName() .. ' ID ' .. genericEntity.id .. ' has been retreived from ' .. self.indexKey .. ' ' .. index .. '.')
-    else
-        local error = false
-        getOneFromDatabase({ [self.indexKey] = index }, function(entity)
-            if entity ~= nil then
-                genericEntity = entity
-            else
-                error = true
-            end
-        end)
-
-        while genericEntity == nil and not error do
-            Citizen.Wait(10)
-        end
-    end
-
+    local genericEntity = self.cached and self.list[index] or self:load( { [self.indexKey] = index } )
+    print(self.entityType.getTypeName() .. ' ID ' .. genericEntity.id .. ' has been retreived from ' .. self.indexKey .. ' ' .. index .. '.')
     return genericEntity
 end
 
@@ -39,11 +21,11 @@ function GenericService:load(conditions, callback)
     local genericEntity = nil
     local error = false
 
-    getOneFromDatabase(conditions, function(entity)
+    getOneFromDatabase(self, conditions, function(entity)
         if (entity ~= nil) then
             genericEntity = entity
             if self.cached then
-                addGenericEntity(genericEntity)
+                addGenericEntity(self, genericEntity)
             end
             if callback ~= nil then
                 callback(genericEntity)
@@ -66,25 +48,25 @@ function GenericService:register(builder, callback)
 end
 
 function GenericService:unload(genericEntity)
-    removeGenericEntity(genericEntity[self.indexKey])
+    removeGenericEntity(self, genericEntity[self.indexKey])
     print(self.entityType.getTypeName() .. ' ID ' .. genericEntity.id .. ' has been unloaded.')
 end
 
-function removeGenericEntity(index)
+function removeGenericEntity(self, index)
     self.list[index] = nil
 end
 
-function addGenericEntity(genericEntity)
+function addGenericEntity(self, genericEntity)
     self.list[genericEntity[self.indexKey]] = genericEntity
 end
 
-function getOneFromDatabase(conditions, callback) {
+function getOneFromDatabase(self, conditions, callback) 
     Database.fetchOne(self.entityType, conditions, function(entity)
         if (entity ~= nil) then
-            print(self.entityType.getTypeName() .. ' ID ' .. genericEntity.id .. ' has been loaded.')
+            print(self.entityType.getTypeName() .. ' ID ' .. entity.id .. ' has been loaded.')
         else
             print(self.entityType.getTypeName() .. ' object with ' .. self.indexKey .. ' ' .. index .. ' could not be fetched from database.')
         end
         callback(entity)
     end)
-}
+end

@@ -3,7 +3,7 @@ PlayerService = setmetatable({}, GenericService)
 PlayerService.__index = PlayerService
 
 function PlayerService:new()
-    local playerService = GenericService.new(self, Player, 'licenseId')
+    local playerService = GenericService.new(self, Player, 'licenseId', true)
     return playerService
 end
 

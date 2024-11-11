@@ -51,7 +51,6 @@ function build(map, builder)
     for key, value in pairs(map) do
         builder(index, maxIndex, key, value)
         variables['@'..key] = value
-        print('@'..key, value)
         index = index + 1
     end
 

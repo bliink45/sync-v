@@ -3,7 +3,7 @@ PersonageService = setmetatable({}, GenericService)
 PersonageService.__index = PersonageService
 
 function PersonageService:new()
-    local personageService = GenericService.new(self, Personage, "playerId")
+    local personageService = GenericService.new(self, Personage, "playerId", true)
     return personageService
 end
 

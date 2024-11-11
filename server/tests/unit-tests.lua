@@ -3,24 +3,18 @@ function PlayerJoiningTest()
 
     playerService:existByLicense(licenseId, function(playerExist)
         if not playerExist then
-            print('Player ' .. GetPlayerName(user) .. ' does not exist.')
-            playerService:register(licenseId, function() playerExist = true end)
+            playerService:register(function()
+                return Player:new(nil, licenseId, 0, 0, 0, nil, 1, false)
+            end)
         end
 
-        Citizen.CreateThread(function()
-            while not playerExist do
-                Citizen.Wait(10)
-            end
-            playerService:load(licenseId)
-        end)
+        local player = playerService:load({ license_id = licenseId })
     end)
 end
 
-AddEventHandler('onResourceStart', function(name, setKickReason, deferrals)
-    print("============================")
+print("============================")
 print("-----------TESTS------------")
-    print("============================")
-    print('')
-    print("PlayerJoiningTest()")
-    PlayerJoiningTest()
-end)
+print("============================")
+print('')
+print("PlayerJoiningTest()")
+PlayerJoiningTest()

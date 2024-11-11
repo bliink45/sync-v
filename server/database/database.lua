@@ -96,7 +96,6 @@ end
 function Database.exists(Type, attributes, callback)
     local query, variables = QueryBuilder.buildExistsQuery(Type, attributes)
     print(query)
-    Utility.printTable(variables)
     MySQL.Async.fetchScalar(query, variables, function(result)
         if callback ~= nil then
             callback(result > 0)
