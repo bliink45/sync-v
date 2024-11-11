@@ -7,15 +7,24 @@ function PlayerService:new()
     return playerService
 end
 
-function PlayerService:existByLicense(licenseId, callback)
+function PlayerService:existByLicense(licenseId)
+    local isExist = nil
     Database.exists(Player, { license_id = licenseId }, function(exist)
-        if exist then
-            print('Player with license ID ' .. licenseId .. ' does exist.')
-        else
-            print('Player with license ID ' .. licenseId .. ' does not exist.')
+        if Config.debug then
+            if exist then
+                print('Player with license ID ' .. licenseId .. ' does exist.')
+            else
+                print('Player with license ID ' .. licenseId .. ' does not exist.')
+            end
         end
-        callback(exist)
+        isExist = exist
     end)
+
+    while isExist == nil do
+        Citizen.Wait(50)
+    end
+
+    return isExist
 end
 
 playerService = PlayerService:new()

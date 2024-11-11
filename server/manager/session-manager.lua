@@ -19,12 +19,16 @@ end
 
 AddEventHandler('playerJoining', function(name, setKickReason, deferrals)
     local user = source
-    print('Player ' .. GetPlayerName(user) .. ' is joining.')
+    if Config.debug then
+        print('Player ' .. GetPlayerName(user) .. ' is joining.')
+    end
 
     local licenseId = Utility.getPlayerLicense(user)
     playerService:existByLicense(licenseId, function(playerExist)
         if not playerExist then
-            print('Player ' .. GetPlayerName(user) .. ' does not exist.')
+            if Config.debug then
+                print('Player ' .. GetPlayerName(user) .. ' does not exist.')
+            end
             playerService:register(function()
                 local currentDate = os.date('%Y-%m-%d %H:%M:%S')
                 return Player:new(nil, licenseId, 0, 0, 0, nil, 1, false)
@@ -43,7 +47,8 @@ end)
 AddEventHandler('playerDropped', function(reason)
     local user = source
     local licenseId = Utility.getPlayerLicense(user)
-
-    print('Player ' .. GetPlayerName(user) .. ' dropped (reason: ' .. reason .. ').')
+    if Config.debug then
+        print('Player ' .. GetPlayerName(user) .. ' dropped (reason: ' .. reason .. ').')
+    end
     playerService:remove(licenseId)
 end)

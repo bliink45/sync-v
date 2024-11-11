@@ -19,18 +19,24 @@ end
 
 function Database.fetchOne(Type, conditions, callback)
     local query, variables = QueryBuilder.buildFetchOneQuery(Type, conditions)
-    print(query)
+    if Config.debug then
+        print(query)
+    end
     MySQL.Async.fetchAll(query, variables, function(queryResult)
         if queryResult then
             local rawPlayerObject = queryResult[1]
-            print(Type.getTypeName() .. ' object with ID ' .. rawPlayerObject.id .. ' has been found.')
+            if Config.debug then
+                print(Type.getTypeName() .. ' object with ID ' .. rawPlayerObject.id .. ' has been found.')
+            end
             local result = Type.fromRawObject(Type, rawPlayerObject)
             if callback ~= nil then
                 callback(result)
             end
         else
             -- Handle case where no result is found
-            print(Type.getTypeName() .. ' object has not been found.')
+            if Config.debug then
+                print(Type.getTypeName() .. ' object has not been found.')
+            end
             if callback ~= nil then
                 callback(nil)
             end
@@ -40,18 +46,22 @@ end
 
 function Database.insertOne(object, callback)
     local query, variables = QueryBuilder.buildInsertOneQuery(object)
-    print(query)
+    if Config.debug then
+        print(query)
+    end
     MySQL.Async.execute(
         query,
         variables,
         function(rowsChanged)
-            if rowsChanged > 0 then
+            if Config.debug then
+                if rowsChanged > 0 then
                 print(object:getTypeName() .. ' object inserted successfully!')
-                if callback ~= nil then
-                    callback()
-                end
-            else
+                else
                 print('Failed to insert ' .. object:getTypeName() .. ' object.')
+                end
+            end
+            if callback ~= nil then
+                callback(rowsChanged > 0)
             end
         end
     )
@@ -59,17 +69,21 @@ end
 
 function Database.updateOne(object, attributes, callback)
     local query, variables = QueryBuilder.buildUpdateOneQuery(object, attributes)
-    print(query)
+    if Config.debug then
+        print(query)
+    end
     MySQL.Async.transaction(
         { query },
         variables,
         function(success) 
             if success then
-                print(print(object:getTypeName() .. ' object udpated successfully!'))
+                if Config.debug then
+                    print(print(object:getTypeName() .. ' object udpated successfully!'))
+                end
                 if callback ~= nil then
                     callback()
                 end
-            else
+            elseif Config.debug then
                 print('Failed to update ' .. object:getTypeName() .. ' object.')
             end
         end
@@ -77,16 +91,23 @@ function Database.updateOne(object, attributes, callback)
 end
 
 function Database.deleteOne(object, callback)
+    local query = 'DELETE FROM ' .. object:getTypeName():lower() .. ' WHERE id=@id'
+    local variables = { ["@id"] = object.id }
+    if Config.debug then
+        print(query)
+    end
     MySQL.Async.execute(
-        'DELETE FROM ' .. object:getTypeName():lower() .. ' WHERE id=@id',
-        { ["@id"] = object.id },
+        query,
+        variables,
         function(rowsChanged)
             if rowsChanged > 0 then
-                print(object:getTypeName() .. ' object deleted successfully!')
+                if Config.debug then
+                    print(object:getTypeName() .. ' object deleted successfully!')
+                end
                 if callback ~= nil then
                     callback()
                 end
-            else
+            elseif Config.debug then
                 print('Failed to delete ' .. object:getTypeName() .. ' object.')
             end
         end
@@ -95,7 +116,9 @@ end
 
 function Database.exists(Type, attributes, callback)
     local query, variables = QueryBuilder.buildExistsQuery(Type, attributes)
-    print(query)
+    if Config.debug then
+        print(query)
+    end
     MySQL.Async.fetchScalar(query, variables, function(result)
         if callback ~= nil then
             callback(result > 0)
