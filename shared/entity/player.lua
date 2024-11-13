@@ -17,10 +17,6 @@ function Player:new(id, licenseId, groupId, xp, citizenLevel, currentPersonageId
     return player
 end
 
-function Player:hello()
-    print(self.id .. ' says hello!')
-end
-
 function Player:getType()
     return Player
 end

@@ -1,27 +1,11 @@
     local licenseId = "3e42rotylj34ojyio6jhjyi89"
 
-function PlayerJoiningTest()
-    local success = false
-    local registered = playerService:existByLicense(licenseId)
-
-    if not registered  then
-        registered = playerService:register(function()
-            return Player:new(nil, licenseId, 0, 0, 0, nil, 1, false)
-        end)
-    end
-
-    if registered then
-        playerService:get(licenseId)
-        success = true
-    end
-
-    return success
+function SessionManagerOnPlayerJoining()
+    return SessionManager.onPlayerJoining(licenseId)
 end
 
-function PlayerLeavingTest()
-    local player = playerService:get(licenseId)
-    playerService:unload(player)
-    return true
+function SessionManagerOnPlayerDroppedTest()
+    return SessionManager.onPlayerDropped(licenseId)
 end
 
 function runTests(tests)
@@ -39,7 +23,7 @@ function runTests(tests)
 
     for key, value in pairs(tests) do
         local success = value() and 'SUCCESS' or 'FAILED'
-        print(key, success)
+        print(success, key)
 
         testCount = testCount + 1
         if success then
@@ -53,7 +37,9 @@ function runTests(tests)
     print("--- Test: " .. testCount .. " --- Success: " .. succeeded .. " --- Failed: " .. failed .. " ---")
 end
 
-runTests({
-    PlayerJoiningTest = PlayerJoiningTest,
-    PlayerLeavingTest = PlayerLeavingTest
-})
+if Config.Dev.runTest then
+    runTests({
+        SessionManagerOnPlayerJoining = SessionManagerOnPlayerJoining,
+        SessionManagerOnPlayerDroppedTest = SessionManagerOnPlayerDroppedTest
+    })
+end
