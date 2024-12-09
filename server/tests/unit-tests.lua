@@ -1,11 +1,30 @@
-    local licenseId = "3e42rotylj34ojyio6jhjyi89"
+local player = Player:new(nil, "477f63750c51035790ce4f1ed44cb4030048eb08", 0, 0, nil, 0, 2, false)
 
 function SessionManagerOnPlayerJoining()
-    return SessionManager.onPlayerJoining(licenseId)
+    return SessionManager.onPlayerJoining(player.licenseId)
 end
 
 function SessionManagerOnPlayerDroppedTest()
-    return SessionManager.onPlayerDropped(licenseId)
+    return SessionManager.onPlayerDropped(player.licenseId)
+end
+
+function init()
+    local inserted = false
+    Database.insertOne(player, function()
+        inserted = true
+    end)
+
+    while not inserted do
+        Citizen.Wait(50)
+    end
+
+    return true
+end
+
+function afterTests()
+    Database.fetchOne(Player, { license_id = player.licenseId }, function(result)
+        Database.deleteOne(result)
+    end)
 end
 
 function runTests(tests)
@@ -38,8 +57,12 @@ function runTests(tests)
 end
 
 if Config.Dev.runTest then
-    runTests({
-        SessionManagerOnPlayerJoining = SessionManagerOnPlayerJoining,
-        SessionManagerOnPlayerDroppedTest = SessionManagerOnPlayerDroppedTest
-    })
+    if init() then
+        runTests({
+            SessionManagerOnPlayerJoining = SessionManagerOnPlayerJoining,
+            SessionManagerOnPlayerDroppedTest = SessionManagerOnPlayerDroppedTest
+        })
+
+        afterTests()
+    end
 end
