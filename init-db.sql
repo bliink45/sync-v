@@ -75,7 +75,7 @@ CREATE UNIQUE INDEX sync_v_rp_role_id_uindex ON sync_v.rp_role (id);
 CREATE INDEX sync_v_character_role_type_fk ON sync_v.rp_role (job_id);
 CREATE INDEX sync_v_character_role_position_id_fk ON sync_v.rp_role (job_position_id);
 
-CREATE TABLE IF NOT EXISTS outfit (
+CREATE TABLE IF NOT EXISTS sync_v.outfit (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   personage_id bigint NOT NULL,
   name varchar(255) NOT NULL,
@@ -90,4 +90,4 @@ ALTER TABLE sync_v.personage_rp_role ADD CONSTRAINT character_role_role_id_fk FO
 ALTER TABLE sync_v.personage_rp_role ADD CONSTRAINT personage_rp_role_character_id_fk FOREIGN KEY (personage_id) REFERENCES sync_v.personage (id);
 ALTER TABLE sync_v.rp_role ADD CONSTRAINT character_role_position_id_fk FOREIGN KEY (job_position_id) REFERENCES sync_v.job_position (id);
 ALTER TABLE sync_v.rp_role ADD CONSTRAINT character_role_type_fk FOREIGN KEY (job_id) REFERENCES sync_v.job (id);
-ALTER TABLE outfit ADD CONSTRAINT outfit_personage_id_fk FOREIGN KEY (personage_id) REFERENCES sync_v.personage (id);
+ALTER TABLE sync_v.outfit ADD CONSTRAINT outfit_personage_id_fk FOREIGN KEY (personage_id) REFERENCES sync_v.personage (id);
