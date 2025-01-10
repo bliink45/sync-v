@@ -36,3 +36,11 @@ function Utility.toCamelCase(str)
         return letter:upper()
     end)
 end
+
+function Utility.encodeJson(data)
+    return json.encode(data)
+end
+
+function Utility.decodeJson(data)
+    return json.decode(data)
+end

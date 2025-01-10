@@ -3,8 +3,8 @@ CREATE SCHEMA IF NOT EXISTS sync_v;
 CREATE TABLE IF NOT EXISTS sync_v.job (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name varchar(255) NOT NULL,
-  created_at date DEFAULT NULL,
-  updated_at date DEFAULT NULL
+  created_at datetime DEFAULT NULL,
+  updated_at datetime DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX sync_v_job_id_uindex ON sync_v.job (id);
@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS sync_v.job_position (
   name varchar(255) NOT NULL,
   rank bigint NOT NULL,
   job_id bigint NOT NULL,
-  created_at date DEFAULT NULL,
-  updated_at date DEFAULT NULL
+  created_at datetime DEFAULT NULL,
+  updated_at datetime DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX sync_v_job_position_id_uindex ON sync_v.job_position (id);
@@ -24,12 +24,12 @@ CREATE INDEX sync_v_job_position_job_id_fk ON sync_v.job_position (job_id);
 CREATE TABLE IF NOT EXISTS sync_v.personage (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   player_id bigint NOT NULL,
-  information longtext NOT NULL,
+  `identity` longtext NOT NULL,
   model longtext NOT NULL,
   current_outfit longtext DEFAULT NULL,
   max_outfit bigint NOT NULL,
-  created_at date DEFAULT NULL,
-  updated_at date DEFAULT NULL
+  created_at datetime DEFAULT NULL,
+  updated_at datetime DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX sync_v_personage_id_uindex ON sync_v.personage (id);
@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS sync_v.personage_rp_role (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   rp_role_id bigint NOT NULL,
   personage_id bigint NOT NULL,
-  created_at date DEFAULT NULL,
-  updated_at date DEFAULT NULL
+  created_at datetime DEFAULT NULL,
+  updated_at datetime DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX sync_v_personage_rp_role_id_uindex ON sync_v.personage_rp_role (id);
@@ -56,8 +56,8 @@ CREATE TABLE IF NOT EXISTS sync_v.player (
   current_personage_id bigint DEFAULT NULL,
   max_personage bigint NOT NULL,
   banned tinyint(1) NOT NULL,
-  created_at date DEFAULT NULL,
-  updated_at date DEFAULT NULL
+  created_at datetime DEFAULT NULL,
+  updated_at datetime DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX sync_v_player_id_uindex ON sync_v.player (id);
@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS sync_v.rp_role (
   job_id bigint NOT NULL,
   job_position_id bigint NOT NULL,
   permisions longtext NOT NULL,
-  created_at date DEFAULT NULL,
-  updated_at date DEFAULT NULL
+  created_at datetime DEFAULT NULL,
+  updated_at datetime DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX sync_v_rp_role_id_uindex ON sync_v.rp_role (id);
@@ -80,8 +80,8 @@ CREATE TABLE IF NOT EXISTS sync_v.outfit (
   personage_id bigint NOT NULL,
   name varchar(255) NOT NULL,
   clothes json NOT NULL,
-  created_at date DEFAULT NULL,
-  updated_at date DEFAULT NULL
+  created_at datetime DEFAULT NULL,
+  updated_at datetime DEFAULT NULL
 );
 
 ALTER TABLE sync_v.job_position ADD CONSTRAINT job_position_job_id_fk FOREIGN KEY (job_id) REFERENCES sync_v.job (id);

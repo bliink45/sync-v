@@ -8,8 +8,8 @@ function GenericEntity:new(id)
 
     -- Set player fields
     genericEntity.id = id
-    genericEntity.createdAt = nil
-    genericEntity.updatedAt = nil
+    genericEntity.createdAt = os.date("%Y/%m/%d-%H:%M:%S")
+    genericEntity.updatedAt = os.date("%Y/%m/%d-%H:%M:%S")
 
     return genericEntity
 end

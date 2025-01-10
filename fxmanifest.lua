@@ -6,10 +6,15 @@ description 'Custom modular framework.'
 author 'bliink & Alex Grants'
 version '1.0'
 
--- Server-specific scripts
+-- Server specific scripts
 server_scripts {
     '@mysql-async/lib/MySQL.lua',
     'server/**/*.lua'
+}
+
+-- Client specific scripts
+client_scripts {
+    'client/**/*.lua'
 }
 
 -- Shared scripts
