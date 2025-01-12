@@ -1,15 +1,13 @@
-CREATE SCHEMA IF NOT EXISTS sync_v;
-
-CREATE TABLE IF NOT EXISTS sync_v.job (
+CREATE TABLE IF NOT EXISTS job (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name varchar(255) NOT NULL,
   created_at datetime DEFAULT NULL,
   updated_at datetime DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX sync_v_job_id_uindex ON sync_v.job (id);
+CREATE UNIQUE INDEX sync_v_job_id_uindex ON job (id);
 
-CREATE TABLE IF NOT EXISTS sync_v.job_position (
+CREATE TABLE IF NOT EXISTS job_position (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name varchar(255) NOT NULL,
   rank bigint NOT NULL,
@@ -18,10 +16,10 @@ CREATE TABLE IF NOT EXISTS sync_v.job_position (
   updated_at datetime DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX sync_v_job_position_id_uindex ON sync_v.job_position (id);
-CREATE INDEX sync_v_job_position_job_id_fk ON sync_v.job_position (job_id);
+CREATE UNIQUE INDEX sync_v_job_position_id_uindex ON job_position (id);
+CREATE INDEX sync_v_job_position_job_id_fk ON job_position (job_id);
 
-CREATE TABLE IF NOT EXISTS sync_v.personage (
+CREATE TABLE IF NOT EXISTS personage (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   player_id bigint NOT NULL,
   `identity` longtext NOT NULL,
@@ -32,10 +30,10 @@ CREATE TABLE IF NOT EXISTS sync_v.personage (
   updated_at datetime DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX sync_v_personage_id_uindex ON sync_v.personage (id);
-CREATE INDEX sync_v_character_player_id_fk ON sync_v.personage (player_id);
+CREATE UNIQUE INDEX sync_v_personage_id_uindex ON personage (id);
+CREATE INDEX sync_v_character_player_id_fk ON personage (player_id);
 
-CREATE TABLE IF NOT EXISTS sync_v.personage_rp_role (
+CREATE TABLE IF NOT EXISTS personage_rp_role (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   rp_role_id bigint NOT NULL,
   personage_id bigint NOT NULL,
@@ -43,11 +41,11 @@ CREATE TABLE IF NOT EXISTS sync_v.personage_rp_role (
   updated_at datetime DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX sync_v_personage_rp_role_id_uindex ON sync_v.personage_rp_role (id);
-CREATE INDEX sync_v_character_role_role_id_fk ON sync_v.personage_rp_role (rp_role_id);
-CREATE INDEX sync_v_personage_rp_role_character_id_fk ON sync_v.personage_rp_role (personage_id);
+CREATE UNIQUE INDEX sync_v_personage_rp_role_id_uindex ON personage_rp_role (id);
+CREATE INDEX sync_v_character_role_role_id_fk ON personage_rp_role (rp_role_id);
+CREATE INDEX sync_v_personage_rp_role_character_id_fk ON personage_rp_role (personage_id);
 
-CREATE TABLE IF NOT EXISTS sync_v.player (
+CREATE TABLE IF NOT EXISTS player (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   license_id varchar(255) NOT NULL,
   group_id bigint NOT NULL,
@@ -60,9 +58,9 @@ CREATE TABLE IF NOT EXISTS sync_v.player (
   updated_at datetime DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX sync_v_player_id_uindex ON sync_v.player (id);
+CREATE UNIQUE INDEX sync_v_player_id_uindex ON player (id);
 
-CREATE TABLE IF NOT EXISTS sync_v.rp_role (
+CREATE TABLE IF NOT EXISTS rp_role (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   job_id bigint NOT NULL,
   job_position_id bigint NOT NULL,
@@ -71,11 +69,11 @@ CREATE TABLE IF NOT EXISTS sync_v.rp_role (
   updated_at datetime DEFAULT NULL
 );
 
-CREATE UNIQUE INDEX sync_v_rp_role_id_uindex ON sync_v.rp_role (id);
-CREATE INDEX sync_v_character_role_type_fk ON sync_v.rp_role (job_id);
-CREATE INDEX sync_v_character_role_position_id_fk ON sync_v.rp_role (job_position_id);
+CREATE UNIQUE INDEX sync_v_rp_role_id_uindex ON rp_role (id);
+CREATE INDEX sync_v_character_role_type_fk ON rp_role (job_id);
+CREATE INDEX sync_v_character_role_position_id_fk ON rp_role (job_position_id);
 
-CREATE TABLE IF NOT EXISTS sync_v.outfit (
+CREATE TABLE IF NOT EXISTS outfit (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   personage_id bigint NOT NULL,
   name varchar(255) NOT NULL,
@@ -84,10 +82,10 @@ CREATE TABLE IF NOT EXISTS sync_v.outfit (
   updated_at datetime DEFAULT NULL
 );
 
-ALTER TABLE sync_v.job_position ADD CONSTRAINT job_position_job_id_fk FOREIGN KEY (job_id) REFERENCES sync_v.job (id);
-ALTER TABLE sync_v.personage ADD CONSTRAINT character_player_id_fk FOREIGN KEY (player_id) REFERENCES sync_v.player (id);
-ALTER TABLE sync_v.personage_rp_role ADD CONSTRAINT character_role_role_id_fk FOREIGN KEY (rp_role_id) REFERENCES sync_v.rp_role (id);
-ALTER TABLE sync_v.personage_rp_role ADD CONSTRAINT personage_rp_role_character_id_fk FOREIGN KEY (personage_id) REFERENCES sync_v.personage (id);
-ALTER TABLE sync_v.rp_role ADD CONSTRAINT character_role_position_id_fk FOREIGN KEY (job_position_id) REFERENCES sync_v.job_position (id);
-ALTER TABLE sync_v.rp_role ADD CONSTRAINT character_role_type_fk FOREIGN KEY (job_id) REFERENCES sync_v.job (id);
-ALTER TABLE sync_v.outfit ADD CONSTRAINT outfit_personage_id_fk FOREIGN KEY (personage_id) REFERENCES sync_v.personage (id);
+ALTER TABLE job_position ADD CONSTRAINT job_position_job_id_fk FOREIGN KEY (job_id) REFERENCES job (id);
+ALTER TABLE personage ADD CONSTRAINT character_player_id_fk FOREIGN KEY (player_id) REFERENCES player (id);
+ALTER TABLE personage_rp_role ADD CONSTRAINT character_role_role_id_fk FOREIGN KEY (rp_role_id) REFERENCES rp_role (id);
+ALTER TABLE personage_rp_role ADD CONSTRAINT personage_rp_role_character_id_fk FOREIGN KEY (personage_id) REFERENCES personage (id);
+ALTER TABLE rp_role ADD CONSTRAINT character_role_position_id_fk FOREIGN KEY (job_position_id) REFERENCES job_position (id);
+ALTER TABLE rp_role ADD CONSTRAINT character_role_type_fk FOREIGN KEY (job_id) REFERENCES job (id);
+ALTER TABLE outfit ADD CONSTRAINT outfit_personage_id_fk FOREIGN KEY (personage_id) REFERENCES personage (id);
