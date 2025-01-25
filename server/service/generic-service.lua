@@ -19,6 +19,23 @@ function GenericService:get(index)
     return genericEntity
 end
 
+function GenericService:update(genericEntity)
+    local error = nil
+
+    Database.updateOne(genericEntity, function(success)
+        error = false
+        if not success then
+            error = true
+        end
+    end)
+
+    while error == nil do
+        Citizen.Wait(1)
+    end
+
+    return error
+end
+
 function GenericService:load(conditions)
     local genericEntity = nil
     local error = false
@@ -35,7 +52,7 @@ function GenericService:load(conditions)
     end)
 
     while genericEntity == nil and not error do
-        Citizen.Wait(50)
+        Citizen.Wait(1)
     end
 
     return genericEntity
@@ -43,16 +60,24 @@ end
 
 function GenericService:register(builder)
     local success = nil
+    local returnId = nil
     local newEntity = builder()
-    Database.insertOne(newEntity, function(inserted)
-        success = inserted
+    Database.insertOne(newEntity, function(insertId)
+        if insertId >= 0 then
+            print(newEntity:getTypeName() .. ' object inserted successfully!')
+        else
+            print('Failed to insert ' .. newEntity:getTypeName() .. ' object.')
+        end
+
+        returnId = insertId
+        success = true
     end)
 
     while success == nil do
-        Citizen.Wait(50)
+        Citizen.Wait(1)
     end
 
-    return success
+    return returnId
 end
 
 function GenericService:unload(genericEntity)

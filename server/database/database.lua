@@ -49,26 +49,28 @@ function Database.insertOne(object, callback)
     if Config.Dev.debug then
         print(query)
     end
-    MySQL.Async.execute(
+    MySQL.Async.insert(
         query,
         variables,
-        function(rowsChanged)
+        function(insertId)
             if Config.Dev.debug then
-                if rowsChanged > 0 then
-                print(object:getTypeName() .. ' object inserted successfully!')
+                if insertId >= 0 then
+                    print(object:getTypeName() .. ' object inserted successfully!')
                 else
-                print('Failed to insert ' .. object:getTypeName() .. ' object.')
+                    print('Failed to insert ' .. object:getTypeName() .. ' object.')
                 end
             end
             if callback ~= nil then
-                callback(rowsChanged > 0)
+                callback(insertId)
             end
         end
     )
 end
 
-function Database.updateOne(object, attributes, callback)
-    local query, variables = QueryBuilder.buildUpdateOneQuery(object, attributes)
+function Database.updateOne(object, callback)
+    object:updateDateOperation()
+
+    local query, variables = QueryBuilder.buildUpdateOneQuery(object)
     if Config.Dev.debug then
         print(query)
     end
@@ -81,7 +83,7 @@ function Database.updateOne(object, attributes, callback)
                     print(print(object:getTypeName() .. ' object udpated successfully!'))
                 end
                 if callback ~= nil then
-                    callback()
+                    callback(success)
                 end
             elseif Config.Dev.debug then
                 print('Failed to update ' .. object:getTypeName() .. ' object.')

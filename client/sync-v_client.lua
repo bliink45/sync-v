@@ -1,7 +1,9 @@
 SyncV = {
     Core = {
         SessionManager = SessionManager,
-        PersonageManager = PersonageManager
+        PersonageManager = PersonageManager,
+        OutfitManager = OutfitManager,
+        PlayerManager = PlayerManager
     },
     Utility = Utility
 }

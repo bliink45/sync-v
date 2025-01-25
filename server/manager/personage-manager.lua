@@ -6,29 +6,26 @@ AddEventHandler('SyncV:PersonageManager.create', function(identity, model, curre
 end)
 
 function PersonageManager.create(identity, model, currentOutfitId)
-    -- TODO
-    print("licenseId", GetLicenseId())
     local playerId = playerService:get(GetLicenseId(source)).id
-    print("playerId", playerId)
 
-    registered = personageService:register(function()
+    local personageId = personageService:register(function()
         return Personage:new(nil, playerId, identity, model, currentOutfitId, Config.Core.PersonageManager.DEFAULT_PLAYER_MAX_OUTFIT)
     end)
 
-    return registered
+    return personageId
 end
 
-function GetLicenseId()
-    -- Get all identifiers for the player
-    local identifiers = GetPlayerIdentifiers(source)
-    
-    -- Loop through the identifiers to find the license
-    for _, identifier in ipairs(identifiers) do
-        if string.sub(identifier, 1, 8) == "license:" then
-            return string.match(identifier, "license:(%w+)") -- Return the license ID
-        end
+RegisterNetEvent('SyncV:PersonageManager.update')
+AddEventHandler('SyncV:PersonageManager.update', function(personageId, attributes)
+    TriggerClientEvent('SyncV:PersonageManager.update::receiver', source, PersonageManager.update(personageId, attributes))
+end)
+
+function PersonageManager.update(personageId, attributes)
+    local personageEntity = personageService:load({ ["id"] = personageId })
+
+    for key, value in pairs(attributes) do
+        personageEntity[key] = value
     end
-    
-    -- Return nil if no license ID is found
-    return nil
+
+    personageService:update(personageEntity)
 end

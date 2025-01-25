@@ -1,10 +1,10 @@
 QueryBuilder = {}
 
-function QueryBuilder.buildUpdateOneQuery(object, attributes)
+function QueryBuilder.buildUpdateOneQuery(object)
     local set = 'SET '
     local variables = build(object:toRawObject(), function(index, maxIndex, key, value)
         local separator = index < maxIndex and ', ' or ''
-        set = set .. key .. '@=' .. key .. separator
+        set = set .. key .. '=@' .. key .. separator
     end)
 
     return 'UPDATE ' .. Utility.toSnakeCase(object:getTypeName()) .. ' ' .. set .. ' WHERE id=@id', variables

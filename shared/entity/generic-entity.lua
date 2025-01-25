@@ -14,6 +14,11 @@ function GenericEntity:new(id)
     return genericEntity
 end
 
+function GenericEntity:updateDateOperation()
+    self.createdAt = os.date("%Y-%m-%d %H:%M:%S", math.floor(self.createdAt / 1000))
+    self.updatedAt = os.date("%Y/%m/%d-%H:%M:%S")
+end
+
 function GenericEntity:toRawObject()
     local rawObject = {}
     for key, value in pairs(self) do
