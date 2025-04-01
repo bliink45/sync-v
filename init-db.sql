@@ -10,19 +10,19 @@ CREATE UNIQUE INDEX sync_v_job_id_uindex ON job (id);
 CREATE TABLE IF NOT EXISTS job_position (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name varchar(255) NOT NULL,
-  rank bigint NOT NULL,
-  job_id bigint NOT NULL,
-  created_at datetime DEFAULT NULL,
-  updated_at datetime DEFAULT NULL
-);
+    `rank` bigint NOT NULL,
+    job_id bigint NOT NULL,
+    created_at datetime DEFAULT NULL,
+    updated_at datetime DEFAULT NULL
+  );
 
-CREATE UNIQUE INDEX sync_v_job_position_id_uindex ON job_position (id);
-CREATE INDEX sync_v_job_position_job_id_fk ON job_position (job_id);
+  CREATE UNIQUE INDEX sync_v_job_position_id_uindex ON job_position (id);
+  CREATE INDEX sync_v_job_position_job_id_fk ON job_position (job_id);
 
-CREATE TABLE IF NOT EXISTS personage (
-  id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  player_id bigint NOT NULL,
-  `identity` longtext NOT NULL,
+  CREATE TABLE IF NOT EXISTS personage (
+    id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    player_id bigint NOT NULL,
+    `identity` longtext NOT NULL,
   model longtext NOT NULL,
   current_outfit longtext DEFAULT NULL,
   max_outfit bigint NOT NULL,
