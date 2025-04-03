@@ -7,7 +7,7 @@ function QueryBuilder.buildUpdateOneQuery(object)
         set = set .. key .. '=?' .. separator
     end)
 
-    return 'UPDATE ' .. Utility.toSnakeCase(object:getTypeName()) .. ' ' .. set .. ' WHERE id=@id', variables
+    return 'UPDATE ' .. Utility.toSnakeCase(object:getTypeName()) .. ' ' .. set .. ' WHERE id=?', variables
 end
 
 function QueryBuilder.buildInsertOneQuery(object)
