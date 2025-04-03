@@ -4,7 +4,7 @@ function QueryBuilder.buildUpdateOneQuery(object)
     local set = 'SET '
     local variables = build(object:toRawObject(), function(index, maxIndex, key, value)
         local separator = index < maxIndex and ', ' or ''
-        set = set .. key .. '=@' .. key .. separator
+        set = set .. key .. '=?' .. separator
     end)
 
     return 'UPDATE ' .. Utility.toSnakeCase(object:getTypeName()) .. ' ' .. set .. ' WHERE id=@id', variables
@@ -17,7 +17,7 @@ function QueryBuilder.buildInsertOneQuery(object)
         fields = fields .. key .. separator
     end)
 
-    local values = fields:gsub("([%w_]+)", "@%1")
+    local values = fields:gsub("([%w_]+)", "?")
     return "INSERT INTO " .. Utility.toSnakeCase(object:getTypeName()) .. ' ' .. fields .. ' VALUES ' .. values, variables
 end
 
@@ -26,7 +26,7 @@ function QueryBuilder.buildFetchOneQuery(Type, conditions)
 
     local variables = build(conditions, function(index, maxIndex, key, value)
         local separator = index < maxIndex and ' AND ' or ''
-        where = where .. key .. '=@' .. key .. separator
+        where = where .. key .. '=?' .. separator
     end)
 
     return "SELECT * FROM " .. Utility.toSnakeCase(Type.getTypeName()) .. ' ' .. where, variables
@@ -37,7 +37,7 @@ function QueryBuilder.buildExistsQuery(Type, attributes)
 
     local variables = build(attributes, function(index, maxIndex, key, value)
         local separator = index < maxIndex and ' AND ' or ''
-        where = where .. key .. '=@' .. key .. separator
+        where = where .. key .. '=?' .. separator
     end)
 
     return "SELECT COUNT(*) FROM " .. Utility.toSnakeCase(Type:getTypeName()) .. ' ' .. where, variables
@@ -50,7 +50,7 @@ function build(map, builder)
     
     for key, value in pairs(map) do
         builder(index, maxIndex, key, value)
-        variables['@'..key] = value
+        table.insert(variables, value)
         index = index + 1
     end
 
