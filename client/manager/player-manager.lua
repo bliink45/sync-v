@@ -1,7 +1,7 @@
 PlayerManager = {}
 
 local operation = false
-local result = nil
+local result
 
 RegisterNetEvent('SyncV:PlayerManager.update::receiver')
 AddEventHandler('SyncV:PlayerManager.update::receiver', function(value) updateOperation(value) end)
@@ -11,11 +11,11 @@ function PlayerManager.update(playerId, attributes)
     return executeOperation()
 end
 
-RegisterNetEvent('SyncV:PlayerManager.getPlayerLicenseId::receiver')
-AddEventHandler('SyncV:PlayerManager.getPlayerLicenseId::receiver', function(value) updateOperation(value) end)
+RegisterNetEvent('SyncV:PlayerManager.getLicenseId::receiver')
+AddEventHandler('SyncV:PlayerManager.getLicenseId::receiver', function(value) updateOperation(value) end)
 
-function PlayerManager.getPlayerLicenseId()
-    TriggerServerEvent('SyncV:PlayerManager.getPlayerLicenseId')
+function PlayerManager.getLicenseId()
+    TriggerServerEvent('SyncV:PlayerManager.getLicenseId')
     return executeOperation()
 end
 

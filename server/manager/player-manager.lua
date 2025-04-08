@@ -15,11 +15,11 @@ function PlayerManager.update(playerId, attributes)
     playerService:update(playerEntity)
 end
 
-RegisterNetEvent('SyncV:PlayerManager.getPlayerLicenseId')
-AddEventHandler('SyncV:PlayerManager.getPlayerLicenseId', function()
-    TriggerClientEvent('SyncV:PlayerManager.getPlayerLicenseId::receiver', source, PlayerManager.getPlayerLicenseId())
+RegisterNetEvent('SyncV:PlayerManager.getLicenseId')
+AddEventHandler('SyncV:PlayerManager.getLicenseId', function()
+    TriggerClientEvent('SyncV:PlayerManager.getLicenseId::receiver', source, PlayerManager.getLicenseId())
 end)
 
-function PlayerManager.getPlayerLicenseId()
+function PlayerManager.GetLicenseId()
     return GetLicenseId(source)
 end
