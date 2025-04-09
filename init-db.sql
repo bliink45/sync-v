@@ -48,6 +48,7 @@ CREATE INDEX sync_v_personage_rp_role_character_id_fk ON personage_rp_role (pers
 CREATE TABLE IF NOT EXISTS player (
   id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
   license_id varchar(255) NOT NULL,
+  user_name varchar(255) NOT NULL,
   group_id bigint NOT NULL,
   citizen_level bigint NOT NULL,
   xp float NOT NULL,

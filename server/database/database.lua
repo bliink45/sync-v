@@ -2,13 +2,17 @@
 Database = {}
 
 -- Add static methods
-function Database.fetchAll(Type, callback)
-    MySQL.query("SELECT * FROM " .. Type.getTypeName(), {}, function(queryResult)
-        if response then
-            local out = {}
+function Database.fetchAll(Type, conditions, callback)
+    local query, variables = QueryBuilder.buildFetchQuery(Type, conditions)
+    if Config.Dev.debug then
+        print(query)
+    end
+    MySQL.query(query, variables, function(queryResult)
+        local out = {}
+        if queryResult then
             for _, rawPlayerObject in ipairs(queryResult) do
                 -- Convert the raw object to the desired type
-                table.insert(out, Type.fromRawObject(rawPlayerObject))
+                table.insert(out, Type:fromRawObject(rawPlayerObject))
             end
         else
             -- Handle case where no result is found
@@ -24,7 +28,10 @@ function Database.fetchAll(Type, callback)
 end
 
 function Database.fetchOne(Type, conditions, callback)
-    local query, variables = QueryBuilder.buildFetchOneQuery(Type, conditions)
+    local query, variables = QueryBuilder.buildFetchQuery(Type, conditions)
+    if Config.Dev.debug then
+        print(query)
+    end
     MySQL.single(query, variables, function(rawObject)
         if rawObject then
             if Config.Dev.debug then
@@ -70,6 +77,7 @@ function Database.updateOne(object, callback)
     local query, variables = QueryBuilder.buildUpdateOneQuery(object)
     if Config.Dev.debug then
         print(query)
+        SyncV.Utility.printTable(variables)
     end
     MySQL.update(query, variables, function(affectedRows)
         if affectedRows ~= nil then

@@ -20,6 +20,6 @@ AddEventHandler('SyncV:PlayerManager.getLicenseId', function()
     TriggerClientEvent('SyncV:PlayerManager.getLicenseId::receiver', source, PlayerManager.getLicenseId())
 end)
 
-function PlayerManager.GetLicenseId()
+function PlayerManager.getLicenseId()
     return GetLicenseId(source)
 end

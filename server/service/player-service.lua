@@ -3,12 +3,12 @@ PlayerService = setmetatable({}, GenericService)
 PlayerService.__index = PlayerService
 
 function PlayerService:new()
-    local playerService = GenericService.new(self, Player, 'licenseId', true)
+    local playerService = GenericService.new(self, Player, 'licenseId', false, true)
     return playerService
 end
 
 function PlayerService:existByLicense(licenseId)
-    local isExist = nil
+    local isExist
     Database.exists(Player, { license_id = licenseId }, function(exist)
         if Config.debug then
             if exist then

@@ -8,9 +8,9 @@ function Utility.printTable(tbl)
         elseif type(value) == "table" then
             print(key .. " ---")
             Utility.printTable(value)
+        else
+            print(key .. ': ' .. value)
         end
-
-        print(key .. ': ' .. value)
     end
 end
 

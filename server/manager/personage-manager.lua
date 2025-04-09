@@ -21,11 +21,24 @@ AddEventHandler('SyncV:PersonageManager.update', function(personageId, attribute
 end)
 
 function PersonageManager.update(personageId, attributes)
-    local personageEntity = personageService:load({ ["id"] = personageId })
+    local personageEntities = personageService:load({ ["id"] = personageId })
 
-    for key, value in pairs(attributes) do
-        personageEntity[key] = value
+    if #personageEntities > 0 then
+        for _, personageEntity in pairs(personageEntities) do
+            for key, value in pairs(attributes) do
+                personageEntity[key] = value
+            end
+            personageService:update(personageEntity)
+        end
     end
+end
 
-    personageService:update(personageEntity)
+RegisterNetEvent('SyncV:PersonageManager.getPersonageListByPlayerId')
+AddEventHandler('SyncV:PersonageManager.getPersonageListByPlayerId', function(playerId)
+    TriggerClientEvent('SyncV:PersonageManager.getPersonageListByPlayerId::receiver', source,
+            PersonageManager.getPersonageListByPlayerId(playerId))
+end)
+
+function PersonageManager.getPersonageListByPlayerId(playerId)
+    return personageService:get(playerId)
 end

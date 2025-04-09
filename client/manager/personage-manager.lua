@@ -1,7 +1,7 @@
 PersonageManager = {}
 
 local operation = false
-local result = nil
+local result
 
 RegisterNetEvent('SyncV:PersonageManager.create::receiver')
 AddEventHandler('SyncV:PersonageManager.create::receiver', function(value) updateOperation(value) end)
@@ -16,6 +16,14 @@ AddEventHandler('SyncV:PersonageManager.update::receiver', function(value) updat
 
 function PersonageManager.update(personageId, attributes)
     TriggerServerEvent('SyncV:PersonageManager.update', personageId, attributes)
+    return executeOperation()
+end
+
+RegisterNetEvent('SyncV:PersonageManager.getPersonageListByPlayerId::receiver')
+AddEventHandler('SyncV:PersonageManager.getPersonageListByPlayerId::receiver', function(value) updateOperation(value) end)
+
+function PersonageManager.getPersonageListByPlayerId(playerId)
+    TriggerServerEvent('SyncV:PersonageManager.getPersonageListByPlayerId', playerId)
     return executeOperation()
 end
 

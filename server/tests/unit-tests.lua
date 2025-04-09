@@ -1,7 +1,7 @@
-local player = Player:new(nil, "477f63750c51035790ce4f1ed44cb4030048eb08", 0, 0, 0, 0, 2, false)
+local player = Player:new(nil, "477f63750c51035790ce4f1ed44cb4030048eb08", "Test", 0, 0, 0, 0, 2, false)
 
 function SessionManagerOnPlayerJoining()
-    return SessionManager.onPlayerJoining(player.licenseId)
+    return SessionManager.onPlayerJoining(player.licenseId, player.userName)
 end
 
 function SessionManagerOnPlayerDroppedTest()

@@ -48,20 +48,32 @@ function SessionManager.getPlayerById(playerId)
     return nil
 end
 
-function SessionManager.onPlayerJoining(licenseId)
-    local success = false
-    local registered = playerService:existByLicense(licenseId)
-
-    if not registered  then
-        registered = playerService:register(function()
-            return Player:new(nil, licenseId, 0, 0, 0, nil, 1, false)
+function registerPlayerIfNecessary(licenseId, userName)
+    if not playerService:existByLicense(licenseId) then
+        return playerService:register(function()
+            return Player:new(nil, licenseId, userName,0, 0, 0, nil, 1, false)
         end)
+    else
+        return false
     end
-    
-    playerService:get(licenseId)
-    success = true
+end
 
-    return success
+function loadPlayer(licenseId, userName)
+    if not registerPlayerIfNecessary(licenseId, userName) then
+        return playerService:get(licenseId)
+    end
+    return nil
+end
+
+function SessionManager.onPlayerJoining(licenseId, userName)
+    return loadPlayer(licenseId, userName)
+end
+
+function SessionManager.loadConnectedPlayer(players)
+    for _, playerId in ipairs(players) do
+        loadPlayer(SyncV.Utility.getPlayerLicense(playerId), GetPlayerName(playerId))
+    end
+    print("SyncV: All connected players has been loaded server side")
 end
 
 function SessionManager.onPlayerDropped(licenseId)
@@ -70,10 +82,17 @@ function SessionManager.onPlayerDropped(licenseId)
     return true
 end
 
-AddEventHandler('playerJoining', function(name, setKickReason, deferrals)
-    SessionManager.onPlayerJoining(Utility.getPlayerLicense(source))
+AddEventHandler('playerJoining', function()
+    SessionManager.onPlayerJoining(Utility.getPlayerLicense(source), GetPlayerName(source))
 end)
 
-AddEventHandler('playerDropped', function(reason)
+AddEventHandler('playerDropped', function()
     SessionManager.onPlayerDropped(Utility.getPlayerLicense(source))
+end)
+
+AddEventHandler('onResourceStart', function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        Citizen.Wait(1000)
+        SessionManager.loadConnectedPlayer(GetPlayers())
+    end
 end)

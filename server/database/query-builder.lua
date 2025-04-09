@@ -1,18 +1,21 @@
 QueryBuilder = {}
 
 function QueryBuilder.buildUpdateOneQuery(object)
+    local objectId = object.id
+    object.id = nil
+
     local set = 'SET '
-    local variables = build(object:toRawObject(), function(index, maxIndex, key, value)
+    local variables = build(object:toRawObject(), function(index, maxIndex, key, _)
         local separator = index < maxIndex and ', ' or ''
         set = set .. key .. '=?' .. separator
     end)
 
-    return 'UPDATE ' .. Utility.toSnakeCase(object:getTypeName()) .. ' ' .. set .. ' WHERE id=?', variables
+    return 'UPDATE ' .. Utility.toSnakeCase(object:getTypeName()) .. ' ' .. set .. ' WHERE id='..objectId, variables
 end
 
 function QueryBuilder.buildInsertOneQuery(object)
     local fields = '('
-    local variables = build(object:toRawObject(), function(index, maxIndex, key, value) 
+    local variables = build(object:toRawObject(), function(index, maxIndex, key, _)
         local separator = index < maxIndex and ', ' or ')'
         fields = fields .. key .. separator
     end)
@@ -21,10 +24,10 @@ function QueryBuilder.buildInsertOneQuery(object)
     return "INSERT INTO " .. Utility.toSnakeCase(object:getTypeName()) .. ' ' .. fields .. ' VALUES ' .. values, variables
 end
 
-function QueryBuilder.buildFetchOneQuery(Type, conditions)
+function QueryBuilder.buildFetchQuery(Type, conditions)
     local where = 'WHERE '
 
-    local variables = build(conditions, function(index, maxIndex, key, value)
+    local variables = build(conditions, function(index, maxIndex, key, _)
         local separator = index < maxIndex and ' AND ' or ''
         where = where .. key .. '=?' .. separator
     end)
@@ -35,7 +38,7 @@ end
 function QueryBuilder.buildExistsQuery(Type, attributes)
     local where = 'WHERE '
 
-    local variables = build(attributes, function(index, maxIndex, key, value)
+    local variables = build(attributes, function(index, maxIndex, key, _)
         local separator = index < maxIndex and ' AND ' or ''
         where = where .. key .. '=?' .. separator
     end)
