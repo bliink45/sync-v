@@ -25,3 +25,15 @@ function OutfitManager.update(outfitId, attributes)
 
     personageService:update(outfitEntity)
 end
+
+RegisterNetEvent('SyncV:OutfitManager.getByPersonageId')
+AddEventHandler('SyncV:OutfitManager.getByPersonageId', function(personageId)
+    TriggerClientEvent('SyncV:OutfitManager.getByPersonageId::receiver', source, OutfitManager.getByPersonageId(personageId))
+end)
+
+function OutfitManager.getByPersonageId(personageId)
+    if Config.Dev.debug then
+        print("OutfitManager.getByPersonageId("..personageId..")")
+    end
+    return outfitService:get(personageId)
+end

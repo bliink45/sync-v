@@ -19,11 +19,19 @@ function PersonageManager.update(personageId, attributes)
     return executeOperation()
 end
 
-RegisterNetEvent('SyncV:PersonageManager.getPersonageListByPlayerId::receiver')
-AddEventHandler('SyncV:PersonageManager.getPersonageListByPlayerId::receiver', function(value) updateOperation(value) end)
+RegisterNetEvent('SyncV:PersonageManager.getListByPlayerId::receiver')
+AddEventHandler('SyncV:PersonageManager.getListByPlayerId::receiver', function(value) updateOperation(value) end)
 
-function PersonageManager.getPersonageListByPlayerId(playerId)
-    TriggerServerEvent('SyncV:PersonageManager.getPersonageListByPlayerId', playerId)
+function PersonageManager.getListByPlayerId(playerId)
+    TriggerServerEvent('SyncV:PersonageManager.getListByPlayerId', playerId)
+    return executeOperation()
+end
+
+RegisterNetEvent('SyncV:PersonageManager.getById::receiver')
+AddEventHandler('SyncV:PersonageManager.getById::receiver', function(value) updateOperation(value) end)
+
+function PersonageManager.getById(personageId)
+    TriggerServerEvent('SyncV:PersonageManager.getById', personageId)
     return executeOperation()
 end
 

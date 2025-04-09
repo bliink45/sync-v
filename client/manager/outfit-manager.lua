@@ -1,7 +1,7 @@
 OutfitManager = {}
 
 local operation = false
-local result = nil
+local result
 
 RegisterNetEvent('SyncV:OutfitManager.create::receiver')
 AddEventHandler('SyncV:OutfitManager.create::receiver', function(value) updateOperation(value) end)
@@ -17,6 +17,14 @@ AddEventHandler('SyncV:OutfitManager.update::receiver', function(value) updateOp
 
 function OutfitManager.update(outfitId, attributes)
     TriggerServerEvent('SyncV:OutfitManager.update', outfitId, attributes)
+    return executeOperation()
+end
+
+RegisterNetEvent('SyncV:OutfitManager.getByPersonageId::receiver')
+AddEventHandler('SyncV:OutfitManager.getByPersonageId::receiver', function(value) updateOperation(value) end)
+
+function OutfitManager.getByPersonageId(personageId)
+    TriggerServerEvent('SyncV:OutfitManager.getByPersonageId', personageId)
     return executeOperation()
 end
 

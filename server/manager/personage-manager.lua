@@ -33,12 +33,21 @@ function PersonageManager.update(personageId, attributes)
     end
 end
 
-RegisterNetEvent('SyncV:PersonageManager.getPersonageListByPlayerId')
-AddEventHandler('SyncV:PersonageManager.getPersonageListByPlayerId', function(playerId)
-    TriggerClientEvent('SyncV:PersonageManager.getPersonageListByPlayerId::receiver', source,
-            PersonageManager.getPersonageListByPlayerId(playerId))
+RegisterNetEvent('SyncV:PersonageManager.getListByPlayerId')
+AddEventHandler('SyncV:PersonageManager.getListByPlayerId', function(playerId)
+    TriggerClientEvent('SyncV:PersonageManager.getListByPlayerId::receiver', source,
+            PersonageManager.getListByPlayerId(playerId))
 end)
 
-function PersonageManager.getPersonageListByPlayerId(playerId)
+function PersonageManager.getListByPlayerId(playerId)
     return personageService:get(playerId)
+end
+
+RegisterNetEvent('SyncV:PersonageManager.getById')
+AddEventHandler('SyncV:PersonageManager.getById', function(personageId)
+    TriggerClientEvent('SyncV:PersonageManager.getById::receiver', source, PersonageManager.getById(personageId))
+end)
+
+function PersonageManager.getById(personageId)
+    return personageService:load({ id = personageId })
 end

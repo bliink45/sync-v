@@ -6,6 +6,7 @@ function Database.fetchAll(Type, conditions, callback)
     local query, variables = QueryBuilder.buildFetchQuery(Type, conditions)
     if Config.Dev.debug then
         print(query)
+        SyncV.Utility.printTable(variables)
     end
     MySQL.query(query, variables, function(queryResult)
         local out = {}
