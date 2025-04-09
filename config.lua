@@ -1,6 +1,6 @@
 Config = {
     Dev = {
-        debug = true,
+        debug = false,
         runTest = true
     },
     Core = {
