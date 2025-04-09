@@ -2,7 +2,6 @@ QueryBuilder = {}
 
 function QueryBuilder.buildUpdateOneQuery(object)
     local objectId = object.id
-    object.id = nil
 
     local set = 'SET '
     local variables = build(object:toRawObject(), function(index, maxIndex, key, _)

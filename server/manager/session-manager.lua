@@ -73,6 +73,7 @@ function SessionManager.loadConnectedPlayer(players)
     for _, playerId in ipairs(players) do
         loadPlayer(SyncV.Utility.getPlayerLicense(playerId), GetPlayerName(playerId))
     end
+    SyncV.Utility.printTable(SessionManager.getPlayerList())
     print("SyncV: All connected players has been loaded server side")
 end
 
