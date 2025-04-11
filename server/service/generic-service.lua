@@ -121,11 +121,12 @@ function GenericService:deleteById(Type, id)
     local success
     Database.deleteOne(Type, id, function(result)
         success = result
-
-        if success then
-            print(Type.getTypeName().." object with id: "..id.." deleted.")
-        else
-            print(Type.getTypeName()..": nothing has been deleted.")
+        if Config.Dev.debug then
+            if success then
+                print(Type.getTypeName().." object with id: "..id.." deleted.")
+            else
+                print(Type.getTypeName()..": nothing has been deleted.")
+            end
         end
     end)
 
@@ -140,13 +141,14 @@ function GenericService:deleteAll(Type, genericEntityList)
     local success
     Database.deleteMany(Type, genericEntityList, function(result)
         success = result
-
-        if success then
-            for _, genericEntity in ipairs(genericEntityList) do
-                print(Type.getTypeName().." object with id: "..genericEntity.id.." deleted.")
+        if Config.Dev.debug then
+            if success then
+                for _, genericEntity in ipairs(genericEntityList) do
+                    print(Type.getTypeName().." object with id: "..genericEntity.id.." deleted.")
+                end
+            else
+                print(Type.getTypeName()..": nothing has been deleted.")
             end
-        else
-            print(Type.getTypeName()..": nothing has been deleted.")
         end
     end)
 
