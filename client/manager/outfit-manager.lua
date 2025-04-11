@@ -3,37 +3,25 @@ OutfitManager = {}
 local operation = false
 local result
 
-RegisterNetEvent('SyncV:OutfitManager.create::receiver')
-AddEventHandler('SyncV:OutfitManager.create::receiver', function(value) updateOperation(value) end)
-
-
-function OutfitManager.create(personageId, name, clothes)
-    TriggerServerEvent('SyncV:OutfitManager.create', personageId, name, clothes)
-    return executeOperation()
+function OutfitManager.deleteById(outfitId)
+    TriggerServerEvent('SyncV:OutfitManager.deleteById', outfitId)
+    return outfitManagerExecuteOperation()
 end
 
-RegisterNetEvent('SyncV:OutfitManager.update::receiver')
-AddEventHandler('SyncV:OutfitManager.update::receiver', function(value) updateOperation(value) end)
+RegisterNetEvent('SyncV:OutfitManager.deleteAll::receiver')
+AddEventHandler('SyncV:OutfitManager.deleteAll::receiver', function(value) outfitManagerUpdateOperation(value) end)
 
-function OutfitManager.update(outfitId, attributes)
-    TriggerServerEvent('SyncV:OutfitManager.update', outfitId, attributes)
-    return executeOperation()
+function OutfitManager.deleteAll(outfitList)
+    TriggerServerEvent('SyncV:OutfitManager.deleteAll', outfitList)
+    return outfitManagerExecuteOperation()
 end
 
-RegisterNetEvent('SyncV:OutfitManager.getByPersonageId::receiver')
-AddEventHandler('SyncV:OutfitManager.getByPersonageId::receiver', function(value) updateOperation(value) end)
-
-function OutfitManager.getByPersonageId(personageId)
-    TriggerServerEvent('SyncV:OutfitManager.getByPersonageId', personageId)
-    return executeOperation()
-end
-
-function updateOperation(value)
+function outfitManagerUpdateOperation(value)
     result = value
     operation = false
 end
 
-function executeOperation()
+function outfitManagerExecuteOperation()
     operation = true
     while operation == true do
         Citizen.Wait(1)

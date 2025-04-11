@@ -9,18 +9,18 @@ version '1.0'
 -- Server specific scripts
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
-    'server/**/*.lua'
+    'server/**/*'
 }
 
 -- Client specific scripts
 client_scripts {
-    'client/**/*.lua'
+    'client/**/*'
 }
 
 -- Shared scripts
 shared_scripts {
     'config.lua',
-    'shared/**/*.lua'
+    'shared/**/*'
 }
 
 dependencies {

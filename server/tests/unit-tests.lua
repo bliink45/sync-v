@@ -1,36 +1,10 @@
-local player = Player:new(nil, "477f63750c51035790ce4f1ed44cb4030048eb08", "Test", 0, 0, 0, 0, 2, false)
-
-function SessionManagerOnPlayerJoining()
-    return SessionManager.onPlayerJoining(player.licenseId, player.userName)
-end
-
-function SessionManagerOnPlayerDroppedTest()
-    return SessionManager.onPlayerDropped(player.licenseId)
-end
-
-function init()
-    local inserted = false
-    Database.insertOne(player, function()
-        inserted = true
-    end)
-
-    while not inserted do
-        Citizen.Wait(50)
-    end
-
-    return true
+function beforeTests()
 end
 
 function afterTests()
-    Database.fetchOne(Player, { license_id = player.licenseId }, function(result)
-        Database.deleteOne(result)
-    end)
 end
 
 function runTests(tests)
-    print('SyncV tests will be starting in few seconds...')
-    Citizen.Wait(5000)
-
     local testCount = 0
     local succeeded = 0
     local failed = 0
@@ -40,9 +14,9 @@ function runTests(tests)
     print("============================")
     print('')
 
-    for key, value in pairs(tests) do
-        local success = value() and 'SUCCESS' or 'FAILED'
-        print(success, key)
+    for _, test in pairs(tests) do
+        local success = test:runTest() and 'SUCCESS' or 'FAILED'
+        print(success, test.name)
 
         testCount = testCount + 1
         if success then
@@ -56,13 +30,25 @@ function runTests(tests)
     print("--- Test: " .. testCount .. " --- Success: " .. succeeded .. " --- Failed: " .. failed .. " ---")
 end
 
-if Config.Dev.runTest then
-    if init() then
-        runTests({
-            SessionManagerOnPlayerJoining = SessionManagerOnPlayerJoining,
-            SessionManagerOnPlayerDroppedTest = SessionManagerOnPlayerDroppedTest
-        })
-
-        afterTests()
-    end
+function runUnitTests()
+    beforeTests()
+    runTests({
+        BasicTest:new(
+                "SessionManagerTest",
+                function()
+                    local player =  SessionManager.loadPlayer(
+                            "fake_license_id",
+                            "TestUser"
+                    )
+                    return player ~= nil
+                end,
+                nil,
+                function()
+                    local player = playerService:get("fake_license_id")
+                    Database.deleteOne(Player, player.id)
+                    playerService:unload(player)
+                end
+        )
+    })
+    afterTests()
 end

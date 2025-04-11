@@ -22,11 +22,6 @@ function Utility.countObjectFields(object)
     return count
 end
 
-function Utility.getPlayerLicense(user)
-    -- Use string.match to extract everything after 'license:'
-    return string.match(GetPlayerIdentifier(user, 0), "license:(.*)")
-end
-
 function Utility.toSnakeCase(str)
     return str:gsub("(%l)(%u)", "%1_%2"):lower()
 end
