@@ -3,28 +3,36 @@ PlayerManager = {}
 local operation = false
 local result
 
-RegisterNetEvent('SyncV:PlayerManager.update::receiver')
-AddEventHandler('SyncV:PlayerManager.update::receiver', function(value) updateOperation(value) end)
+RegisterNetEvent('SyncV:PlayerManager.getClientLicenseId::receiver')
+AddEventHandler('SyncV:PlayerManager.getClientLicenseId::receiver', function(value) playerManagerUpdateOperation(value) end)
 
-function PlayerManager.update(playerId, attributes)
-    TriggerServerEvent('SyncV:PlayerManager.update', playerId, attributes)
-    return executeOperation()
+function PlayerManager.getClientLicenseId()
+    TriggerServerEvent('SyncV:PlayerManager.getClientLicenseId')
+    return playerManagerExecuteOperation()
 end
 
-RegisterNetEvent('SyncV:PlayerManager.getLicenseId::receiver')
-AddEventHandler('SyncV:PlayerManager.getLicenseId::receiver', function(value) updateOperation(value) end)
+RegisterNetEvent('SyncV:PlayerManager.getClientPlayerData::receiver')
+AddEventHandler('SyncV:PlayerManager.getClientPlayerData::receiver', function(value) playerManagerUpdateOperation(value) end)
 
-function PlayerManager.getLicenseId()
-    TriggerServerEvent('SyncV:PlayerManager.getLicenseId')
-    return executeOperation()
+function PlayerManager.getClientPlayerData()
+    TriggerServerEvent('SyncV:PlayerManager.getClientPlayerData')
+    return playerManagerExecuteOperation()
 end
 
-function updateOperation(value)
+RegisterNetEvent('SyncV:PlayerManager.getPlayerByLicenseId::receiver')
+AddEventHandler('SyncV:PlayerManager.getPlayerByLicenseId::receiver', function(value) playerManagerUpdateOperation(value) end)
+
+function PlayerManager.getPlayerByLicenseId(licenseId)
+    TriggerServerEvent('SyncV:PlayerManager.getPlayerByLicenseId', licenseId)
+    return playerManagerExecuteOperation()
+end
+
+function playerManagerUpdateOperation(value)
     result = value
     operation = false
 end
 
-function executeOperation()
+function playerManagerExecuteOperation()
     operation = true
     while operation == true do
         Citizen.Wait(1)

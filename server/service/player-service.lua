@@ -10,9 +10,9 @@ end
 function PlayerService:existByLicense(licenseId)
     local isExist
     Database.exists(Player, { license_id = licenseId }, function(exist)
-        if Config.debug then
+        if Config.Dev.debug then
             if exist then
-                print('Player with license ID ' .. licenseId .. ' does exist.')
+                print('Player with license ID ' .. licenseId .. ' exist.')
             else
                 print('Player with license ID ' .. licenseId .. ' does not exist.')
             end

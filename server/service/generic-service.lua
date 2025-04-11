@@ -17,12 +17,34 @@ function GenericService:new(Type, indexKey, hasToManyRelation, cached)
     return genericService
 end
 
-function GenericService:get(index)
-    local object = self.cached and self.list[index] or self:load({ [Utility.toSnakeCase(self.indexKey)] = index })
-    if Config.debug then
-        print(self.entityType.getTypeName() .. ' ID ' .. object.id .. ' has been retreived from ' .. self.indexKey .. ' ' .. index .. '.')
+function GenericService:get(indexValue)
+    local object
+
+    if self.cached then
+        object = self.list[indexValue]
     end
+
+    if (object == nil) then
+        if Config.Dev.debug and self.cached then
+            print(self.entityType.getTypeName().." with "..self.indexKey..": "..indexValue.. " is not in cache")
+        end
+        object = self:fetch({ [Utility.toSnakeCase(self.indexKey)] = indexValue })
+    elseif Config.Dev.debug then
+        print(self.entityType.getTypeName() ..' ID '.. object.id..' has been loaded from cache with index: '
+                ..self.indexKey..' -> '..indexValue..'.')
+    end
+
     return object
+end
+
+function GenericService:updateById(id, attributes)
+    local genericEntity = self:fetch({ id = id })
+
+    for key, value in pairs(attributes) do
+        genericEntity[key] = value
+    end
+
+    self:update(genericEntity)
 end
 
 function GenericService:update(genericEntity)
@@ -41,15 +63,18 @@ function GenericService:update(genericEntity)
     return error
 end
 
-function GenericService:load(conditions)
+function GenericService:fetch(conditions)
     local out
     local error = false
 
-    getFromDatabase(self, conditions, function(result)
+    local shouldBeSingleResult = conditions.id ~= nil
+
+    getFromDatabase(self, shouldBeSingleResult, conditions, function(result)
+        out = result
+
         if (result ~= nil) then
-            out = result
             if self.cached then
-                if self.hasToManyRelation then
+                if self.hasToManyRelation and not shouldBeSingleResult then
                     for _, value in ipairs(result) do
                         addGenericEntity(self, value)
                     end
@@ -74,12 +99,6 @@ function GenericService:register(builder)
     local returnId
     local newEntity = builder()
     Database.insertOne(newEntity, function(insertId)
-        if insertId >= 0 then
-            print(newEntity:getTypeName() .. ' object inserted successfully!')
-        else
-            print('Failed to insert ' .. newEntity:getTypeName() .. ' object.')
-        end
-
         returnId = insertId
         success = true
     end)
@@ -93,9 +112,49 @@ end
 
 function GenericService:unload(genericEntity)
     removeGenericEntity(self, genericEntity[self.indexKey])
-    if Config.debug then
+    if Config.Dev.debug then
         print(self.entityType.getTypeName() .. ' ID ' .. genericEntity.id .. ' has been unloaded.')
     end
+end
+
+function GenericService:deleteById(Type, id)
+    local success
+    Database.deleteOne(Type, id, function(result)
+        success = result
+
+        if success then
+            print(Type.getTypeName().." object with id: "..id.." deleted.")
+        else
+            print(Type.getTypeName()..": nothing has been deleted.")
+        end
+    end)
+
+    while success == nil do
+        Citizen.Wait(1)
+    end
+
+    return success
+end
+
+function GenericService:deleteAll(Type, genericEntityList)
+    local success
+    Database.deleteMany(Type, genericEntityList, function(result)
+        success = result
+
+        if success then
+            for _, genericEntity in ipairs(genericEntityList) do
+                print(Type.getTypeName().." object with id: "..genericEntity.id.." deleted.")
+            end
+        else
+            print(Type.getTypeName()..": nothing has been deleted.")
+        end
+    end)
+
+    while success == nil do
+        Citizen.Wait(1)
+    end
+
+    return success
 end
 
 function removeGenericEntity(self, index)
@@ -106,28 +165,30 @@ function addGenericEntity(self, genericEntity)
     self.list[genericEntity[self.indexKey]] = genericEntity
 end
 
-function getFromDatabase(self, conditions, callback)
+function getFromDatabase(self, shouldBeSingleResult, conditions, callback)
     local databaseFunction = Database.fetchOne
 
-    if self.hasToManyRelation then
+    if self.hasToManyRelation and not shouldBeSingleResult then
         databaseFunction = Database.fetchAll
     end
 
     databaseFunction(self.entityType, conditions, function(result)
-        if Config.debug then
-            local debugFunc = function(entity)
+        if Config.Dev.debug then
+            local debugSingleEntity = function(entity)
                 if entity ~= nil then
-                    print(self.entityType.getTypeName() .. ' ID ' .. entity.id .. ' has been loaded.')
+                    print(self.entityType.getTypeName() .. ' ID ' .. entity.id .. ' has been fetched.')
                 else
                     print(self.entityType.getTypeName() .. ' object could not be fetched from database.')
                 end
             end
 
-            if self.hasToManyRelation then
+            local debugFunc = debugSingleEntity
+
+            if self.hasToManyRelation and not shouldBeSingleResult then
                 debugFunc = function(entities)
                     if entities ~= nil then
-                        for _, entity in pairs(myArray) do
-                            debugFunc(entity)
+                        for _, entity in ipairs(entities) do
+                            debugSingleEntity(entity)
                         end
                     else
                         print(self.entityType.getTypeName() .. ' object list could not be fetched from database.')

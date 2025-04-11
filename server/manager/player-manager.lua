@@ -1,25 +1,41 @@
 PlayerManager = {}
 
-RegisterNetEvent('SyncV:PlayerManager.update')
-AddEventHandler('SyncV:PlayerManager.update', function(outfitId, attributes)
-    TriggerClientEvent('SyncV:PlayerManager.update::receiver', source, PlayerManager.update(outfitId, attributes))
+RegisterNetEvent('SyncV:PlayerManager.getClientLicenseId')
+AddEventHandler('SyncV:PlayerManager.getClientLicenseId', function()
+    print("SyncV:PlayerManager: ["..GetPlayerName(source).."] get client license id requested.")
+    TriggerClientEvent('SyncV:PlayerManager.getClientLicenseId::receiver', source, PlayerManager.getClientLicenseId())
 end)
 
-function PlayerManager.update(playerId, attributes)
-    local playerEntity = playerService:load({ ["id"] = playerId })
-
-    for key, value in pairs(attributes) do
-        playerEntity[key] = value
+function PlayerManager.getClientLicenseId()
+    print("PlayerManager.getClientLicenseId", source)
+    if Config.Dev.debug then
+        print("PlayerManager.getClientLicenseId()")
     end
-
-    playerService:update(playerEntity)
+    return GetLicenseId(source)
 end
 
-RegisterNetEvent('SyncV:PlayerManager.getLicenseId')
-AddEventHandler('SyncV:PlayerManager.getLicenseId', function()
-    TriggerClientEvent('SyncV:PlayerManager.getLicenseId::receiver', source, PlayerManager.getLicenseId())
+RegisterNetEvent('SyncV:PlayerManager.getClientPlayerData')
+AddEventHandler('SyncV:PlayerManager.getClientPlayerData', function()
+    print("SyncV:PlayerManager: ["..GetPlayerName(source).."] get client player data requested.")
+    TriggerClientEvent('SyncV:PlayerManager.getClientPlayerData::receiver', source, PlayerManager.getClientPlayerData())
 end)
 
-function PlayerManager.getLicenseId()
-    return GetLicenseId(source)
+function PlayerManager.getClientPlayerData()
+    if Config.Dev.debug then
+        print("PlayerManager.getClientPlayerData()")
+    end
+    return playerService:get(GetLicenseId(source))
+end
+
+RegisterNetEvent('SyncV:PlayerManager.getPlayerByLicenseId')
+AddEventHandler('SyncV:PlayerManager.getPlayerByLicenseId', function(licenseId)
+    print("SyncV:PlayerManager: ["..GetPlayerName(source).."] get Player by license id: "..licenseId.." requested.")
+    TriggerClientEvent('SyncV:PlayerManager.getPlayerByLicenseId::receiver', source, PlayerManager.getPlayerByLicenseId(licenseId))
+end)
+
+function PlayerManager.getPlayerByLicenseId(licenseId)
+    if Config.Dev.debug then
+        print("PlayerManager.getPlayerByLicenseId()")
+    end
+    return playerService:get(licenseId)
 end

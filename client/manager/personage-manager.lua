@@ -3,39 +3,40 @@ PersonageManager = {}
 local operation = false
 local result
 
-RegisterNetEvent('SyncV:PersonageManager.create::receiver')
-AddEventHandler('SyncV:PersonageManager.create::receiver', function(value) updateOperation(value) end)
+RegisterNetEvent('SyncV:PersonageManager.getListByPlayerId::receiver')
+AddEventHandler('SyncV:PersonageManager.getListByPlayerId::receiver', function(values) personageManagerUpdateOperation(values) end)
 
-function PersonageManager.create(identity, model, currentOutfitId)
-    TriggerServerEvent('SyncV:PersonageManager.create', identity, model, currentOutfitId)
-    return executeOperation()
+function PersonageManager.getListByPlayerId(playerId)
+    TriggerServerEvent('SyncV:PersonageManager.getListByPlayerId', playerId)
+    return personageManagerExecuteOperation()
 end
 
-RegisterNetEvent('SyncV:PersonageManager.update::receiver')
-AddEventHandler('SyncV:PersonageManager.update::receiver', function(value) updateOperation(value) end)
+RegisterNetEvent('SyncV:PersonageManager.save::receiver')
+AddEventHandler('SyncV:PersonageManager.save::receiver', function(value) personageManagerUpdateOperation(value) end)
 
-function PersonageManager.update(personageId, attributes)
-    TriggerServerEvent('SyncV:PersonageManager.update', personageId, attributes)
-    return executeOperation()
+function PersonageManager.save(PersonageData)
+    TriggerServerEvent('SyncV:PersonageManager.save', PersonageData)
+    return personageManagerExecuteOperation()
 end
 
-RegisterNetEvent('SyncV:PersonageManager.getPersonageListByPlayerId::receiver')
-AddEventHandler('SyncV:PersonageManager.getPersonageListByPlayerId::receiver', function(value) updateOperation(value) end)
+RegisterNetEvent('SyncV:PersonageManager.deleteById::receiver')
+AddEventHandler('SyncV:PersonageManager.deleteById::receiver', function(value) personageManagerUpdateOperation(value) end)
 
-function PersonageManager.getPersonageListByPlayerId(playerId)
-    TriggerServerEvent('SyncV:PersonageManager.getPersonageListByPlayerId', playerId)
-    return executeOperation()
+function PersonageManager.deleteById(personageId)
+    TriggerServerEvent('SyncV:PersonageManager.deleteById', personageId)
+    return personageManagerExecuteOperation()
 end
 
-function updateOperation(value)
+function personageManagerUpdateOperation(value)
     result = value
     operation = false
 end
 
-function executeOperation()
+function personageManagerExecuteOperation()
     operation = true
     while operation == true do
         Citizen.Wait(1)
     end
+
     return result
 end

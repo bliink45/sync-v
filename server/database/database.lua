@@ -5,14 +5,17 @@ Database = {}
 function Database.fetchAll(Type, conditions, callback)
     local query, variables = QueryBuilder.buildFetchQuery(Type, conditions)
     if Config.Dev.debug then
-        print(query)
+        print("Database.fetchAll("..Type.getTypeName()..")", query)
     end
     MySQL.query(query, variables, function(queryResult)
         local out = {}
         if queryResult then
-            for _, rawPlayerObject in ipairs(queryResult) do
+            for _, rawObject in ipairs(queryResult) do
                 -- Convert the raw object to the desired type
-                table.insert(out, Type:fromRawObject(rawPlayerObject))
+                if Config.Dev.debug then
+                    print(Type.getTypeName() .. ' object with ID ' .. rawObject.id .. ' has been found.')
+                end
+                table.insert(out, Type.fromRawObject(Type, rawObject))
             end
         else
             -- Handle case where no result is found
@@ -30,7 +33,7 @@ end
 function Database.fetchOne(Type, conditions, callback)
     local query, variables = QueryBuilder.buildFetchQuery(Type, conditions)
     if Config.Dev.debug then
-        print(query)
+        print("Database.fetchOne("..Type.getTypeName()..")", query)
     end
     MySQL.single(query, variables, function(rawObject)
         if rawObject then
@@ -55,7 +58,7 @@ end
 function Database.insertOne(object, callback)
     local query, variables = QueryBuilder.buildInsertOneQuery(object)
     if Config.Dev.debug then
-        print(query)
+        print("Database.insertOne("..object:getTypeName()..")", query)
     end
     MySQL.insert(query, variables, function(insertId)
         if Config.Dev.debug then
@@ -76,14 +79,13 @@ function Database.updateOne(object, callback)
     object:updateDateOperation()
     local query, variables = QueryBuilder.buildUpdateOneQuery(object)
     if Config.Dev.debug then
-        print(query)
-        SyncV.Utility.printTable(variables)
+        print("Database.updateOne("..object:getTypeName()..")", query)
     end
     MySQL.update(query, variables, function(affectedRows)
         if affectedRows ~= nil then
             if Config.Dev.debug then
                 print(object:getTypeName() .. ' object updated successfully!')
-                print(affectedRows .. " rows affected.")
+                print(affectedRows .. " row(s) affected.")
             end
             if callback ~= nil then
                 callback(success)
@@ -94,11 +96,11 @@ function Database.updateOne(object, callback)
     end)
 end
 
-function Database.deleteOne(object, callback)
-    local query = 'DELETE FROM ' .. object:getTypeName():lower() .. ' WHERE id=?'
-    local variables = { object.id }
+function Database.deleteOne(Type, objectId, callback)
+    local query = 'DELETE FROM ' .. Type.getTypeName():lower() .. ' WHERE id=?'
+    local variables = { objectId }
     if Config.Dev.debug then
-        print(query)
+        print("Database.deleteOne("..Type.getTypeName()..")", query)
     end
     MySQL.execute(
             query,
@@ -106,14 +108,46 @@ function Database.deleteOne(object, callback)
             function(queryInfo)
                 if queryInfo ~= nil then
                     if Config.Dev.debug then
-                        print(object:getTypeName() .. ' object deleted successfully!')
+                        print(queryInfo.affectedRows .. " row(s) affected.")
+                    end
+                    if callback ~= nil then
+                        callback(queryInfo.affectedRows > 0)
+                    end
+                elseif Config.Dev.debug then
+                    print('Failed to delete ' .. Type.getTypeName() .. ' object.')
+                end
+            end
+    )
+end
+
+function Database.deleteMany(Type, objects, callback)
+    if #objects == 0 then
+        if Config.Dev.debug then
+            print(Type.getTypeName() .. ": Object list empty.")
+        end
+        if callback then callback(false) end
+        return
+    end
+
+    local query, variables = QueryBuilder.buildDeleteManyQuery(Type, objects)
+
+    if Config.Dev.debug then
+        print("Database.deleteMany("..Type.getTypeName()..")", query)
+    end
+
+    MySQL.execute(
+            query,
+            variables,
+            function(queryInfo)
+                if queryInfo ~= nil then
+                    if Config.Dev.debug then
                         print(queryInfo.affectedRows .. " rows affected.")
                     end
                     if callback ~= nil then
-                        callback()
+                        callback(queryInfo.affectedRows > 0)
                     end
                 elseif Config.Dev.debug then
-                    print('Failed to delete ' .. object:getTypeName() .. ' object.')
+                    print('Failed to delete ' .. typeName .. ' objects.')
                 end
             end
     )
@@ -122,7 +156,7 @@ end
 function Database.exists(Type, attributes, callback)
     local query, variables = QueryBuilder.buildExistsQuery(Type, attributes)
     if Config.Dev.debug then
-        print(query)
+        print("Database.exists("..Type.getTypeName()..")", query)
     end
     MySQL.scalar(query, variables, function(result)
         if callback ~= nil then

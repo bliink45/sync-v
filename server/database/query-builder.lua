@@ -45,6 +45,18 @@ function QueryBuilder.buildExistsQuery(Type, attributes)
     return "SELECT COUNT(*) FROM " .. Utility.toSnakeCase(Type:getTypeName()) .. ' ' .. where, variables
 end
 
+function QueryBuilder.buildDeleteManyQuery(Type, objectList)
+    local ids = {}
+    for _, obj in ipairs(objectList) do
+        table.insert(ids, obj.id)
+    end
+
+    -- Generate placeholders (?, ?, ?, ...)
+    local placeholders = table.concat({string.rep('?', #ids):gmatch('.')()}, ', ')
+
+    return 'DELETE FROM ' .. Type.getTypeName():lower() .. ' WHERE id IN (' .. placeholders .. ')', ids
+end
+
 function build(map, builder)
     local maxIndex = Utility.countObjectFields(map)
     local variables = {}
