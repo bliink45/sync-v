@@ -14,13 +14,13 @@ function PersonageManager.getListByPlayerId(playerId)
     return personageService:get(playerId)
 end
 
-RegisterNetEvent('SyncV:PersonageManager.save')
-AddEventHandler('SyncV:PersonageManager.save', function(PersonageData)
-    print("SyncV:PersonageManager: ["..GetPlayerName(source).."] save Personage requested.")
-    TriggerClientEvent('SyncV:PersonageManager.save::receiver', source, PersonageManager.save(PersonageData))
+RegisterNetEvent('SyncV:PersonageManager.create')
+AddEventHandler('SyncV:PersonageManager.create', function(PersonageData)
+    print("SyncV:PersonageManager: ["..GetPlayerName(source).."] create Personage requested.")
+    TriggerClientEvent('SyncV:PersonageManager.create::receiver', source, PersonageManager.create(PersonageData))
 end)
 
-function PersonageManager.save(PersonageData)
+function PersonageManager.create(PersonageData)
     local player = playerService:get(GetLicenseId(source))
 
     local personageId = personageService:register(function()
@@ -35,6 +35,30 @@ function PersonageManager.save(PersonageData)
     end)
 
     personageService:updateById(personageId, { ["currentOutfit"]=outfitId })
+end
+
+RegisterNetEvent('SyncV:PersonageManager.save')
+AddEventHandler('SyncV:PersonageManager.save', function(personageId, PersonageData)
+    print("SyncV:PersonageManager: ["..GetPlayerName(source).."] save Personage ID: " .. personageId .. " requested.")
+    TriggerClientEvent('SyncV:PersonageManager.save::receiver', source, PersonageManager.save(personageId, PersonageData))
+end)
+
+function PersonageManager.save(personageId, PersonageData)
+    local attributes = {
+        identity = SyncV.Utility.encodeJson(PersonageData.Identity),
+        model = SyncV.Utility.encodeJson(PersonageData.Model)
+    }
+    personageService:updateById(personageId, attributes)
+end
+
+RegisterNetEvent('SyncV:PersonageManager.getById')
+AddEventHandler('SyncV:PersonageManager.getById', function(personageId)
+    print("SyncV:PersonageManager: ["..GetPlayerName(source).."] get Personage with id: "..personageId.." requested.")
+    TriggerClientEvent('SyncV:PersonageManager.getById::receiver', source, PersonageManager.getById(personageId))
+end)
+
+function PersonageManager.getById(personageId)
+    return personageService:fetch({ id = personageId })
 end
 
 RegisterNetEvent('SyncV:PersonageManager.deleteById')

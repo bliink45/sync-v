@@ -3,6 +3,17 @@ OutfitManager = {}
 local operation = false
 local result
 
+RegisterNetEvent('SyncV:OutfitManager.getById::receiver')
+AddEventHandler('SyncV:OutfitManager.getById::receiver', function(value) outfitManagerUpdateOperation(value) end)
+
+function OutfitManager.getById(outfitId)
+    TriggerServerEvent('SyncV:OutfitManager.getById', outfitId)
+    return outfitManagerExecuteOperation()
+end
+
+RegisterNetEvent('SyncV:OutfitManager.deleteById::receiver')
+AddEventHandler('SyncV:OutfitManager.deleteById::receiver', function(value) outfitManagerUpdateOperation(value) end)
+
 function OutfitManager.deleteById(outfitId)
     TriggerServerEvent('SyncV:OutfitManager.deleteById', outfitId)
     return outfitManagerExecuteOperation()

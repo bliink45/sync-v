@@ -1,5 +1,18 @@
 OutfitManager = {}
 
+RegisterNetEvent('SyncV:OutfitManager.getById')
+AddEventHandler('SyncV:OutfitManager.getById', function(outfitId)
+    print("SyncV:OutfitManager: ["..GetPlayerName(source).."] get Outfit with ID: "..outfitId.." requested.")
+    TriggerClientEvent('SyncV:OutfitManager.getById::receiver', source, OutfitManager.getById(outfitId))
+end)
+
+function OutfitManager.getById(outfitId)
+    if Config.Dev.debug then
+        print("OutfitManager.getById("..outfitId..")")
+    end
+    return outfitService:fetch({ id = outfitId })
+end
+
 RegisterNetEvent('SyncV:OutfitManager.deleteById')
 AddEventHandler('SyncV:OutfitManager.deleteById', function(outfitId)
     print("SyncV:OutfitManager: ["..GetPlayerName(source).."] delete Outfit with ID: "..outfitId.." requested.")
