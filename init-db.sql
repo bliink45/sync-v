@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS player (
   current_personage_id bigint DEFAULT NULL,
   max_personage bigint NOT NULL,
   banned tinyint(1) NOT NULL,
+  last_location longtext DEFAULT NULL,
   created_at datetime DEFAULT NULL,
   updated_at datetime DEFAULT NULL
 );

@@ -35,7 +35,21 @@ end)
 
 function PlayerManager.getPlayerByLicenseId(licenseId)
     if Config.Dev.debug then
-        print("PlayerManager.getPlayerByLicenseId()")
+        print("PlayerManager.getPlayerByLicenseId("..licenseId..")")
     end
     return playerService:get(licenseId)
+end
+
+RegisterNetEvent('SyncV:PlayerManager.setCurrentPersonageId')
+AddEventHandler('SyncV:PlayerManager.setCurrentPersonageId', function(personageId)
+    print("SyncV:PlayerManager: ["..GetPlayerName(source).."] set current personage id: "..personageId.." requested.")
+    TriggerClientEvent('SyncV:PlayerManager.setCurrentPersonageId::receiver', source, PlayerManager.setCurrentPersonageId(personageId))
+end)
+
+function PlayerManager.setCurrentPersonageId(personageId)
+    if Config.Dev.debug then
+        print("PlayerManager.setCurrentPersonageId("..personageId..")")
+    end
+
+    playerService:updateById(playerService:get(GetLicenseId(source)).id, {currentPersonageId = personageId})
 end

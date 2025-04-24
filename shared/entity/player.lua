@@ -2,7 +2,7 @@
 Player = setmetatable({}, GenericEntity)
 Player.__index = Player
 
-function Player:new(id, licenseId, userName, groupId, xp, citizenLevel, currentPersonageId, maxPersonage, banned)
+function Player:new(id, licenseId, userName, groupId, xp, citizenLevel, currentPersonageId, maxPersonage, banned, lastLocation)
     local player = GenericEntity.new(self, id)
 
     -- Set player fields
@@ -14,6 +14,7 @@ function Player:new(id, licenseId, userName, groupId, xp, citizenLevel, currentP
     player.currentPersonageId = currentPersonageId
     player.maxPersonage = maxPersonage
     player.banned = banned
+    player.lastLocation = lastLocation
 
     return player
 end

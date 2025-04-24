@@ -27,6 +27,14 @@ function PlayerManager.getPlayerByLicenseId(licenseId)
     return playerManagerExecuteOperation()
 end
 
+RegisterNetEvent('SyncV:PlayerManager.setCurrentPersonageId::receiver')
+AddEventHandler('SyncV:PlayerManager.getPlayerByLicenseId::receiver', function(value) playerManagerUpdateOperation(value) end)
+
+function PlayerManager.setCurrentPersonageId(personageId)
+    TriggerServerEvent('SyncV:PlayerManager.setCurrentPersonageId', personageId)
+    return playerManagerExecuteOperation()
+end
+
 function playerManagerUpdateOperation(value)
     result = value
     operation = false
