@@ -119,13 +119,13 @@ function getCurrentLocation()
     local playerPed = PlayerPedId()
     local coords = GetEntityCoords(playerPed)
 
-    local streetHash, crossingHash = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
+    local streetHash, _ = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local streetName = GetStreetNameFromHashKey(streetHash)
     local zoneCode = GetNameOfZone(x, y, z)
     local zoneName = zoneLabels[zoneCode] or zoneCode
 
     return {
-        name = streetName..", "..zoneName,
+        name = { street = streetName, zone = zoneName },
         x = coords.x,
         y = coords.y,
         z = coords.z
